@@ -1,30 +1,54 @@
-import socket, codecs 
+import argparse, socket, select, os, sys
 
-Host = '127.0.0.1'
-Port = 8000
+if __name__ == "__main__":
 
-listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-listener.bind((Host, Port))
-listener.listen(5)
-print('Serving HTTP on port %s ...' % Port)
+    def handle_http_request(request):
+        print('Handling')
+        request = request
 
-while True:
-	client, clientAddr = listener.accept();
-	request = client.recv(1024)
-	print(request)
-        
-        httpResponse = "This Works" 
+        requestString = bytes.decode(request)
+        print(requestString)
 
+        returnString = 'HTTP/1.1 200 OK\n'
+        response = returnString
+        response += '<html><body><h1>Hello World</h1></body></html>'
 
-	client.sendall(httpResponse)
-	client.close()
+        response = response.encode()
+        return response
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument("host")
+    parser.add_argument("port")
+    args = parser.parse_args()
+    print("Server started on ", "host: ", args.host, "port: ", args.port)
 
+    host = args.host
+    port = int(args.port)
 
-def process_http_header(socket):
-    print('Implement HTTP Header Processing')
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # this has no effect, why ?
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    sock.bind((host, port))
+    sock.listen(5)
 
+    while True:
+        # Get the list sockets which are ready to be read through select
+        rlist, wlist, elist = select.select([sock], [], [])
+        print('executing for loop')
+        if sock in rlist:
+            # Handle the case in which there is a new connection recieved through server_socket
+            client, addr = sock.accept()
+            print('accepted client', addr)
 
+            print('processing request')
+            request = client.recv(1024)
 
+            print('sending to http handler')
+            returnRequest = handle_http_request(request)
+
+            client.send(returnRequest)
+            client.close()
+        else:
+            while rlist.len == 0:
+                print("waiting for next connection")
 
