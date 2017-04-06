@@ -9,11 +9,10 @@ if __name__ == "__main__":
         requestString = bytes.decode(request)
         print(requestString)
 
-        returnString = 'HTTP/1.1 200 OK\n'
-        response = returnString
-        response += '<html><body><h1>Hello World</h1></body></html>'
+        returnString = 'HTTP/1.1 200 OK\n\r\n\r'
+        returnString += '<html><body><h1>Hello World</h1></body></html>'
 
-        response = response.encode()
+        response = returnString.encode()
         return response
 
     parser = argparse.ArgumentParser()
@@ -40,11 +39,14 @@ if __name__ == "__main__":
             client, addr = sock.accept()
             print('accepted client', addr)
 
-            print('processing request')
+            # handle a situation where the connection stops half way through, a different client requests, then resume the previous
             request = client.recv(1024)
 
             print('sending to http handler')
             returnRequest = handle_http_request(request)
+
+            #check out that file you book marked
+
 
             client.send(returnRequest)
             client.close()
