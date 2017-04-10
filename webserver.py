@@ -3,30 +3,34 @@ import argparse, socket, select, os, sys
 if __name__ == "__main__":
 
     def process_http_header(request):
-        print('Processing HTTP request...')
+        print('\nProcessing HTTP request...')
         request = request
 
         requestString = request.decode()
-        
+        print('\n', requestString, '\n')
+
         header = requestString.split('\n')
         header = header[0].split()
-       
+        
         if(header[0] == 'GET'):
             if(header[1].split()[0] == '/'):
                 if(header[2] == 'HTTP/1.1'):
-                    try:
-                        print('trying to open file')
-                        filePath = ''.join('static', header[1]) 
-                        fileHandler = open(filePath.join('static',header[1]), 'rb')
-                        print('\nfile opened')
+                    # if file path is empty set to index else add static directory to filepath
+                    if(header[1] == '/'):
+                        filePath = 'static/index.html'
+                    else:
+                        filePath = ''.join(('static','%s' % header[1])) 
+                    
+                    try: 
+                        fileHandler = open(filePath, 'rb')
                         htmlPage = fileHandler.read()
                         fileHandler.close()
                         num = 200
-                    except IOError:
+                    except:
                         print('IOError')
                         num = 404
-                        httpPage = b'<html><body><h1>404 File Not Found</h1></body></html>'
-                        httpPage = httpPage.encode()
+                        htmlPage = "404 File Not Found"
+                        htmlPage = htmlPage.encode()
                 else:
                     num = 400
             else:
@@ -37,8 +41,8 @@ if __name__ == "__main__":
                         
         response = getResponseHeader(num).encode()
         if(num == 400):
-            httpPage = '<html><body><h1>400 Bad Request</h1></body></html>'
-            httpPage = httpPage.encode()
+            htmlPage = "400 Bad Request"
+            htmlPage = htmlPage.encode()
             
         response += htmlPage
         
