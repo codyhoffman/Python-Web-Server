@@ -2,17 +2,22 @@ import argparse, socket, select, os, sys
 
 if __name__ == "__main__":
 
-    def handle_http_request(request):
+    def process_http_header(request):
         print('Handling')
         request = request
 
-        requestString = bytes.decode(request)
+        requestString = request.decode()
         print(requestString)
 
-        returnString = 'HTTP/1.1 200 OK\n\r\n\r'
-        returnString += '<html><body><h1>Hello World</h1></body></html>'
-
+        returnString = ''
+        returnString = 'HTTP/1.1 200 OK'
         response = returnString.encode()
+        
+        fileHandler = open('static/index.html', 'rb')
+        htmlPage = fileHandler.read()
+        fileHandler.close()
+
+        response += htmlPage
         return response
 
     parser = argparse.ArgumentParser()
@@ -43,12 +48,13 @@ if __name__ == "__main__":
             request = client.recv(1024)
 
             print('sending to http handler')
-            returnRequest = handle_http_request(request)
+            returnRequest = process_http_header(request)
 
             #check out that file you book marked
 
-
+            print("sending response...")
             client.send(returnRequest)
+            print("response sent. Closing connection")
             client.close()
         else:
             while rlist.len == 0:
