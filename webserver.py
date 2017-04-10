@@ -3,22 +3,55 @@ import argparse, socket, select, os, sys
 if __name__ == "__main__":
 
     def process_http_header(request):
-        print('Handling')
+        print('Processing HTTP request...')
         request = request
 
         requestString = request.decode()
-        print(requestString)
-
-        returnString = ''
-        returnString = 'HTTP/1.1 200 OK'
-        response = returnString.encode()
         
-        fileHandler = open('static/index.html', 'rb')
-        htmlPage = fileHandler.read()
-        fileHandler.close()
+        header = requestString.split('\n')
+        header = header[0].split()
+       
+        if(header[0] == 'GET'):
+            if(header[1].split()[0] == '/'):
+                if(header[2] == 'HTTP/1.1'):
+                    try:
+                        print('trying to open file')
+                        filePath = ''.join('static', header[1]) 
+                        fileHandler = open(filePath.join('static',header[1]), 'rb')
+                        print('\nfile opened')
+                        htmlPage = fileHandler.read()
+                        fileHandler.close()
+                        num = 200
+                    except IOError:
+                        print('IOError')
+                        num = 404
+                        httpPage = b'<html><body><h1>404 File Not Found</h1></body></html>'
+                        httpPage = httpPage.encode()
+                else:
+                    num = 400
+            else:
+                num = 400
+        else:
+            num = 400
 
+                        
+        response = getResponseHeader(num).encode()
+        if(num == 400):
+            httpPage = '<html><body><h1>400 Bad Request</h1></body></html>'
+            httpPage = httpPage.encode()
+            
         response += htmlPage
+        
         return response
+
+    def getResponseHeader(num):
+        if(num == 200):
+            r = 'HTTP/1.1 200 OK'
+        if(num == 404):
+            r = 'HTTP/1.1 404 NOT FOUND'
+        else:
+            r = 'HTTP/1.1 400 BAD REQUEST'
+        return r
 
     parser = argparse.ArgumentParser()
     parser.add_argument("host")
