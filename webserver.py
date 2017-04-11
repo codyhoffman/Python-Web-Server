@@ -1,4 +1,4 @@
-import argparse, socket, select, os, sys
+import argparse, socket, select
 
 if __name__ == "__main__":
 
@@ -7,30 +7,31 @@ if __name__ == "__main__":
         request = request
 
         requestString = request.decode()
-        print('\n', requestString, '\n')
+        print(requestString, '\n')
 
         header = requestString.split('\n')
         header = header[0].split()
-        
+
+        isSlash = header[1]
+        isSlash = isSlash[:1]
+
         if(header[0] == 'GET'):
-            if(header[1].split()[0] == '/'):
+            if(isSlash == '/'):
                 if(header[2] == 'HTTP/1.1'):
                     # if file path is empty set to index else add static directory to filepath
-                    if(header[1] == '/'):
-                        filePath = 'static/index.html'
+                    if(header[1] != '/'):
+                        filePath = ''.join(('static', '%s' % header[1]))
+                        #print(filePath)
                     else:
-                        filePath = ''.join(('static','%s' % header[1])) 
+                        filePath = 'static/index.html'
                     
                     try: 
                         fileHandler = open(filePath, 'rb')
                         htmlPage = fileHandler.read()
                         fileHandler.close()
                         num = 200
-                    except:
-                        print('IOError')
+                    except IOError:
                         num = 404
-                        htmlPage = "404 File Not Found"
-                        htmlPage = htmlPage.encode()
                 else:
                     num = 400
             else:
@@ -38,24 +39,23 @@ if __name__ == "__main__":
         else:
             num = 400
 
-                        
         response = getResponseHeader(num).encode()
-        if(num == 400):
-            htmlPage = "400 Bad Request"
-            htmlPage = htmlPage.encode()
-            
-        response += htmlPage
-        
-        return response
+
+        if(num == 400 or num == 404):
+            return response
+        else:
+            response += htmlPage
+            return response
 
     def getResponseHeader(num):
         if(num == 200):
-            r = 'HTTP/1.1 200 OK'
-        if(num == 404):
-            r = 'HTTP/1.1 404 NOT FOUND'
+            header = 'HTTP/1.1 200 Ok\r\n Content-Type: text/html\r\n\r\n'
+        elif(num == 404):
+            header = 'HTTP/1.1 404 Not Found\r\n'
         else:
-            r = 'HTTP/1.1 400 BAD REQUEST'
-        return r
+            header = 'HTTP/1.1 400 Bad Request\r\n'
+
+        return header
 
     parser = argparse.ArgumentParser()
     parser.add_argument("host")
@@ -75,25 +75,19 @@ if __name__ == "__main__":
     while True:
         # Get the list sockets which are ready to be read through select
         rlist, wlist, elist = select.select([sock], [], [])
-        print('executing for loop')
-        if sock in rlist:
+
+        for socket in rlist:
             # Handle the case in which there is a new connection recieved through server_socket
             client, addr = sock.accept()
+            wlist.append(client)
             print('accepted client', addr)
 
-            # handle a situation where the connection stops half way through, a different client requests, then resume the previous
+        for client in wlist:
             request = client.recv(1024)
-
             print('sending to http handler')
             returnRequest = process_http_header(request)
 
-            #check out that file you book marked
-
-            print("sending response...")
             client.send(returnRequest)
             print("response sent. Closing connection")
+            print(returnRequest)
             client.close()
-        else:
-            while rlist.len == 0:
-                print("waiting for next connection")
-
