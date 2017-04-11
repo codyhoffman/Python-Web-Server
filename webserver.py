@@ -90,7 +90,7 @@ if __name__ == "__main__":
             print('sending to http handler')
             returnRequest = process_http_header(request)
 
-            client.send(returnRequest)
+            client.sendall(returnRequest)
             print("response sent. Closing connection")
             print(returnRequest)
             client.close()
