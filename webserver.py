@@ -1,4 +1,4 @@
-import argparse, socket, select
+import argparse,socket, select
 
 if __name__ == "__main__":
 
@@ -11,9 +11,12 @@ if __name__ == "__main__":
 
         header = requestString.split('\n')
         header = header[0].split()
-
-        isSlash = header[1]
-        isSlash = isSlash[:1]
+        try:
+            isSlash = header[1]
+            isSlash = isSlash[:1]
+        except IOError:
+            num = 400
+            print("Incorrect File path, all file paths must start with /")
 
         if(header[0] == 'GET'):
             if(isSlash == '/'):
