@@ -1,7 +1,7 @@
 import sys, os, socket, errno
 
 serverAddr = ('127.0.0.1', 8000)
-request = 'GET /index.html HTTP/1.1'
+request = 'GET /index.html HTTP/1.1\r\n\r\n'
 request = request.encode()
 
 
