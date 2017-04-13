@@ -175,7 +175,7 @@ if __name__ == "__main__":
 
     def getResponseHeader(num):
         if(num == 200):
-            header = 'HTTP/1.1 200 Ok\r\n Content-Type: text/html\r\n\r\n'
+            header = 'HTTP/1.1 200 Ok\r\nContent-Type: text/html\r\n\r\n'
         elif(num == 404):
             header = 'HTTP/1.1 404 Not Found\r\n\r\n'
         elif(num == 400):
@@ -212,7 +212,7 @@ if __name__ == "__main__":
             #rlist.append(client)
             print('Accepted client', addr)
 
-            request = client.recv(1)
+            request = client.recv(1024)
             request = request.decode()
 
             print('Sending to http handler')

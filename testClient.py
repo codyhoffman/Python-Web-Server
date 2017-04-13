@@ -1,4 +1,4 @@
-import sys, os, socket, errno
+import sys, os, socket, errno, time
 
 serverAddr = ('127.0.0.1', 8000)
 request = 'GET /index.html HTTP/1.1\r\n\r\n'
@@ -10,9 +10,45 @@ sock.connect(serverAddr)
 sock2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock2.connect(serverAddr)
 
-req = request[i]
+print('client1 sent 1 byte')
+req = 'G'
 req = req.encode()
 sock.send(req)
+
+print('client2 sent 28 bytes')
+req = request
+req = req.encode()
+sock2.send(req)
+
+# sent 1 byte from client1 and the entire request from client2 then sleep 5 and send 
+# 3 more bytes
+print('sleeping 5 secs')
+time.sleep(5)
+print('client1 sending 3 bytes')
+req = 'ET /'
+req = req.encode()
+sock.send(req)
+
+#sleep 5 secs then finish sending the rest of the request
+print('sleeping 5 secs')
+time.sleep(5)
+print('client1 sending rest of request')
+req = '/index.html HTTP/1.1\r\n\r\n'
+req = req.encode()
+sock.send(req)
+
+
+
+
+
+print('done sending both requests')
+
+
+
+
+
+
+
 '''
 def main(maxClients, maxConns):
 	i = 0
