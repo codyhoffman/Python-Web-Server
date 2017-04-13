@@ -82,12 +82,15 @@ if __name__ == "__main__":
                                                                             i+=1
                                                                             if len(header) <= i:
                                                                                 break
+                                                                            while(header[i] != '\r'):
+                                                                                i+=1
                                                                             if(header[i] == '\r'):
                                                                                 i+=1
                                                                                 if len(header) <= i:
                                                                                     break
                                                                                 if(header[i] == '\n'):
                                                                                     num = 200
+                                                                                    done = True
                                                                                     try:
                                                                                         # return index if path is /
                                                                                         if path == '/':
@@ -102,6 +105,7 @@ if __name__ == "__main__":
                                                                                         break
 
                                                                                     except IOError:
+                                                                                        done = True
                                                                                         num = 404
                                                                                         break
                                                                                 else:
@@ -158,17 +162,17 @@ if __name__ == "__main__":
             else:
                 num = 400
                 break
-        # only encode when complete?
-        response = getResponseHeader(num).encode()
 
         if(num == 400 or num == 404):
             done = True
+            response = getResponseHeader(num).encode()
             return response, done
         elif(num == 200):
+            response = getResponseHeader(num).encode()
             response += htmlPage
-            print(response)
             return response, done
         else:
+            response = getResponseHeader(num)
             done = False
             return response, done
 
@@ -209,9 +213,10 @@ if __name__ == "__main__":
         for socket in rlist:
             # Handle the case in which there is a new connection recieved through server_socket
             client, addr = sock.accept()
-            #rlist.append(client)
             print('Accepted client', addr)
+            wlist.append(client)
 
+        for client in wlist:
             request = client.recv(1024)
             request = request.decode()
 
@@ -230,8 +235,11 @@ if __name__ == "__main__":
                 client.sendall(returnRequest[0])
                 print("Response sent. Closing connection")
                 print(returnRequest)
+                if client in clientDict:
+                    del clientDict[client]
                 client.close()
+                wlist.remove(client)
             else:
-                rlist.append(client)
+                print(request)
                 clientDict[client] = request
                 print(clientDict)
