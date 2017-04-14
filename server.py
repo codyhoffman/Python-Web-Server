@@ -1,4 +1,4 @@
-import argparse,socket, select
+import argparse, socket, select
 
 if __name__ == "__main__":
 
@@ -213,7 +213,7 @@ if __name__ == "__main__":
         for socket in rlist:
             # Handle the case in which there is a new connection recieved through server_socket
             client, addr = sock.accept()
-            print('Accepted client', addr)
+            print('\nAccepted client', addr)
             wlist.append(client)
 
         for client in wlist:
@@ -223,23 +223,24 @@ if __name__ == "__main__":
             print('Sending to http handler')
 
             if client in clientDict:
-                fullReq = clientDict[client] + request
-                print(fullReq)
-                returnRequest = process_http_header(fullReq)
+                request = clientDict[client] + request
+                returnRequest = process_http_header(request)
             else:
                 returnRequest = process_http_header(request)
 
-            print(returnRequest[1])
+            print('Done?', returnRequest[1])
 
             if returnRequest[1] is True:
                 client.sendall(returnRequest[0])
                 print("Response sent. Closing connection")
-                print(returnRequest)
+                print(returnRequest[0])
+
                 if client in clientDict:
                     del clientDict[client]
-                client.close()
+
                 wlist.remove(client)
+                client.close()
             else:
-                print(request)
+                wlist.append(client)
                 clientDict[client] = request
-                print(clientDict)
+

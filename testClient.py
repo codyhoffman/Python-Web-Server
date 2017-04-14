@@ -9,7 +9,13 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.connect(serverAddr)
 sock2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock2.connect(serverAddr)
-
+sock3 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock3.connect(serverAddr)
+sock4 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock4.connect(serverAddr)
+sock5 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock5.connect(serverAddr)
+'''
 print('client1 sent 1 byte')
 req = 'G'
 req = req.encode()
@@ -20,10 +26,23 @@ req = request
 req = req.encode()
 sock2.send(req)
 
+print('client3 sent 4 bytes')
+req = 'GET '
+req = req.encode()
+sock3.send(req)
+
+
+
 # sent 1 byte from client1 and the entire request from client2 then sleep 5 and send 
 # 3 more bytes
 print('sleeping 5 secs')
 time.sleep(5)
+
+print('client3 finishes rest of request, but its FNF')
+req = '/ads.html HTTP/1.1\r\n\r\n'
+req = req.encode()
+sock3.send(req)
+
 print('client1 sending 3 bytes')
 req = 'ET /'
 req = req.encode()
@@ -33,42 +52,30 @@ sock.send(req)
 print('sleeping 5 secs')
 time.sleep(5)
 print('client1 sending rest of request')
-req = '/index.html HTTP/1.1\r\n\r\n'
+req = 'index.html HTTP/1.1\r\n\r\n'
 req = req.encode()
 sock.send(req)
 
-
-
-
-
-print('done sending both requests')
-
-
-
-
-
-
-
 '''
-def main(maxClients, maxConns):
-	i = 0
-	socks = []
-	for clientNum in range(maxClients):
-		if i < 29:
-			req = request[i]
-			req = req.encode()
-			i+=1
-		pid = os.fork()
-		if pid ==0:
-			for connectionNum in range(maxConns):
-				sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-				sock.connect(serverAddr)
-				sock.sendall(req)
-				socks.append(sock)
-				print(connectionNum)
-				os._exit(0)
 
-if __name__ == '__main__':
-	main(5,2)
-	print('We are concurrent')
-'''
+#time.sleep(2)
+print('quick send files ')
+req = 'GET /index.html HTTP/1.1\r\n\r\n'
+req = req.encode()
+sock.send(req)
+
+req = 'GET /car.html HTTP/1.1\r\n\r\n'
+req = req.encode()
+sock2.send(req)
+
+req = 'car.html HTTP/1.1\r\n\r\n'
+req = req.encode()
+sock3.send(req)
+
+req = 'GET /404.html HTTP/1.1\r\n\r\n'
+req = req.encode()
+sock4.send(req)
+
+req = 'GET / HTTP/1.1\r\n\r\n'
+req = req.encode()
+sock5.send(req)
