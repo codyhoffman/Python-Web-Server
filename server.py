@@ -1,3 +1,15 @@
+"""
+CS:3640 Networks HW4 Web Server that Processes HTTP GET requests
+Author: Cody Hoffman
+Date: 4/13/2017
+
+Start the server at the terminal with (python3 server.py host port):
+    python3 server.py 127.0.0.1 8000
+
+Then search for http://127.0.0.1:8000/ in your browser!
+
+"""
+
 import argparse, socket, select
 
 if __name__ == "__main__":

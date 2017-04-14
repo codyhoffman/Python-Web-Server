@@ -15,7 +15,7 @@ sock4 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock4.connect(serverAddr)
 sock5 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock5.connect(serverAddr)
-
+'''
 print('client1 sent 1 byte')
 req = 'G'
 req = req.encode()
@@ -57,6 +57,7 @@ req = req.encode()
 sock.send(req)
 
 time.sleep(2)
+'''
 print('quick send files ')
 
 print('Done4')
@@ -65,7 +66,7 @@ req = req.encode()
 sock.send(req)
 
 print('Done5')
-req = 'GET /car.html HTTP/1.1\r\n\r\n'
+req = 'GET /car.html HTTP/1.1\r\nCar\r\n\r\n'
 req = req.encode()
 sock2.send(req)
 
