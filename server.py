@@ -26,39 +26,36 @@ if __name__ == "__main__":
         num = 0
 
         while True:
-            if(header[i] == 'G'):
-                i+=1
-                if len(header) <= i:
-                    break
-                if(header[i] == 'E'):
+            try:
+                if(header[i] == 'G'):
                     i+=1
                     if len(header) <= i:
                         break
-                    if(header[i] == 'T'):
+                    if(header[i] == 'E'):
                         i+=1
                         if len(header) <= i:
                             break
-                        if(header[i] == ' '):
+                        if(header[i] == 'T'):
                             i+=1
                             if len(header) <= i:
                                 break
-                            if(header[i] == '/'):
+                            if(header[i] == ' '):
                                 i+=1
                                 if len(header) <= i:
                                     break
-                                path ='/'
-                                while(header[i] != ' '):
-                                    path = path + header[i]
-                                    i+=1
-                                if(header[i] == ' '):
+                                if(header[i] == '/'):
                                     i+=1
                                     if len(header) <= i:
                                         break
-                                    if(header[i] == 'H'):
+                                    path ='/'
+                                    while(header[i] != ' '):
+                                        path = path + header[i]
+                                        i+=1
+                                    if(header[i] == ' '):
                                         i+=1
                                         if len(header) <= i:
                                             break
-                                        if(header[i] == 'T'):
+                                        if(header[i] == 'H'):
                                             i+=1
                                             if len(header) <= i:
                                                 break
@@ -66,59 +63,66 @@ if __name__ == "__main__":
                                                 i+=1
                                                 if len(header) <= i:
                                                     break
-                                                if(header[i] == 'P'):
+                                                if(header[i] == 'T'):
                                                     i+=1
                                                     if len(header) <= i:
                                                         break
-                                                    if(header[i] == '/'):
+                                                    if(header[i] == 'P'):
                                                         i+=1
                                                         if len(header) <= i:
                                                             break
-                                                        if(header[i] == '1'):
+                                                        if(header[i] == '/'):
                                                             i+=1
                                                             if len(header) <= i:
                                                                 break
-                                                            if(header[i] == '.'):
+                                                            if(header[i] == '1'):
                                                                 i+=1
                                                                 if len(header) <= i:
                                                                     break
-                                                                if(header[i] == '1'):
+                                                                if(header[i] == '.'):
                                                                     i+=1
                                                                     if len(header) <= i:
                                                                         break
-                                                                    if(header[i] == '\r'):
+                                                                    if(header[i] == '1'):
                                                                         i+=1
                                                                         if len(header) <= i:
                                                                             break
-                                                                        if(header[i] == '\n'):
+                                                                        if(header[i] == '\r'):
                                                                             i+=1
                                                                             if len(header) <= i:
                                                                                 break
-                                                                            while(header[i] != '\r'):
-                                                                                i+=1
-                                                                            if(header[i] == '\r'):
+                                                                            if(header[i] == '\n'):
                                                                                 i+=1
                                                                                 if len(header) <= i:
                                                                                     break
-                                                                                if(header[i] == '\n'):
-                                                                                    num = 200
-                                                                                    done = True
-                                                                                    try:
-                                                                                        # return index if path is /
-                                                                                        if path == '/':
-                                                                                            filePath = 'static/index.html'
-                                                                                        else:
-                                                                                            filePath = 'static' + path
-
-                                                                                        fileHandler = open(filePath, 'rb')
-                                                                                        htmlPage = fileHandler.read()
-                                                                                        fileHandler.close()
-
+                                                                                while(header[i] != '\r'):
+                                                                                    i+=1
+                                                                                if(header[i] == '\r'):
+                                                                                    i+=1
+                                                                                    if len(header) <= i:
                                                                                         break
-
-                                                                                    except IOError:
+                                                                                    if(header[i] == '\n'):
+                                                                                        num = 200
                                                                                         done = True
-                                                                                        num = 404
+                                                                                        try:
+                                                                                            # return index if path is /
+                                                                                            if path == '/':
+                                                                                                filePath = 'static/index.html'
+                                                                                            else:
+                                                                                                filePath = 'static' + path
+
+                                                                                            fileHandler = open(filePath, 'rb')
+                                                                                            htmlPage = fileHandler.read()
+                                                                                            fileHandler.close()
+
+                                                                                            break
+
+                                                                                        except IOError:
+                                                                                            done = True
+                                                                                            num = 404
+                                                                                            break
+                                                                                    else:
+                                                                                        num = 400
                                                                                         break
                                                                                 else:
                                                                                     num = 400
@@ -171,8 +175,9 @@ if __name__ == "__main__":
                 else:
                     num = 400
                     break
-            else:
+            except:
                 num = 400
+                print('empty request')
                 break
 
         if(num == 400 or num == 404):
