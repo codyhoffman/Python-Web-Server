@@ -3,7 +3,7 @@ import argparse, socket, select
 if __name__ == "__main__":
 
     def process_http_header(request):
-        print('\nProcessing HTTP request...')
+        print('Processing HTTP request...')
 
         requestString = request
         print(requestString, '\n')
@@ -193,7 +193,7 @@ if __name__ == "__main__":
     parser.add_argument("host")
     parser.add_argument("port")
     args = parser.parse_args()
-    print("Server started on ", "host: ", args.host, "port: ", args.port)
+    print("Server started on ", "host: ", args.host, "port: ", args.port, '\n\n')
 
     host = args.host
     port = int(args.port)
@@ -213,7 +213,7 @@ if __name__ == "__main__":
         for socket in rlist:
             # Handle the case in which there is a new connection recieved through server_socket
             client, addr = sock.accept()
-            print('\nAccepted client', addr)
+            print('Accepted client', addr)
             wlist.append(client)
 
         for client in wlist:
@@ -232,8 +232,8 @@ if __name__ == "__main__":
 
             if returnRequest[1] is True:
                 client.sendall(returnRequest[0])
-                print("Response sent. Closing connection")
-                print(returnRequest[0])
+                print("Response sent. Closing connection.")
+                print(returnRequest[0], '\n\n\n')
 
                 if client in clientDict:
                     del clientDict[client]
