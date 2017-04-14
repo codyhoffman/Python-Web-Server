@@ -10,7 +10,7 @@ Then search for http://127.0.0.1:8000/ in your browser!
 
 """
 
-import argparse, socket, select
+import argparse, socket, select, sys
 
 if __name__ == "__main__":
 
@@ -224,8 +224,13 @@ if __name__ == "__main__":
     clientDict = {}
 
     while True:
+
         # Get the list sockets which are ready to be read through select
-        rlist, wlist, elist = select.select([sock], [], [])
+        try:
+            rlist, wlist, elist = select.select([sock], [], [])
+        # when forced to exit
+        except KeyboardInterrupt:
+            sys.exit('Sever disconnected via keyboard interrupt')
 
         for socket in rlist:
             # Handle the case in which there is a new connection recieved through server_socket
